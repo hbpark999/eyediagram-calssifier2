@@ -251,6 +251,10 @@ if uploaded_image is not None:
             display_in_pink_box(f"{class_names[i]}: {prob:.4f}")
 
         # Step 3: GPT Analysis
+        if user_api_key is None and not drive_accessible:
+            st.warning("Please enter your OpenAI API key to proceed with GPT analysis.")
+            user_api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
+
         st.markdown("<h2>Step 3. GPT Analysis:</h2>", unsafe_allow_html=True)
         st.markdown(f"[Click here for detailed GPT analysis of {class_names[predicted_class]}](https://chatgpt.com/g/g-9NESyIPPB-eye-pattern-analyzer)")
 
@@ -258,15 +262,16 @@ if uploaded_image is not None:
         with st.spinner('Fetching detailed analysis from GPT...'):
             gpt_response = get_gpt_explanation(class_names[predicted_class], user_api_key=user_api_key)
 
-            # Display GPT analysis
-            st.markdown("<h3>Detailed Analysis:</h3>", unsafe_allow_html=True)
+        # Display GPT analysis
+        st.markdown("<h3>Detailed Analysis:</h3>", unsafe_allow_html=True)
 
-            # Split GPT response into paragraphs and apply formatting
-            paragraphs = gpt_response.split('\n')
+        # Split GPT response into major sections and format accordingly
+        sections = gpt_response.split('
 
-            formatted_response = ''.join([
-                f"<div style='background-color:#FFFF99;padding:10px;border-radius:5px;margin-bottom:10px;'>"
-                f"<pre style='background-color:#F0F0F0;padding:10px;border-radius:5px;'>{paragraph.strip()}</pre>"
-                f"</div>" for paragraph in paragraphs if paragraph.strip()])
+')
+        formatted_response = ''.join([
+            f"<div style='background-color:#FFFF99;padding:20px;border-radius:10px;margin-bottom:20px;'>"
+            f"<h4 style='background-color:#F0F0F0;padding:10px;border-radius:5px;'>{section.strip()}</h4>"
+            f"</div>" for section in sections if section.strip()])
 
-            st.markdown(formatted_response, unsafe_allow_html=True)
+        st.markdown(formatted_response, unsafe_allow_html=True)
