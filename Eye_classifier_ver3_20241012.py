@@ -9,6 +9,7 @@ import cv2
 import numpy as np
 import gdown
 import os
+import urllib.request
 
 # Set the device (either GPU if available, or CPU)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -51,6 +52,14 @@ def classify_eye_diagram(image, model, classes):
         probabilities = torch.nn.functional.softmax(output, dim=1)[0]
         predicted_class = torch.argmax(probabilities).item()
         return predicted_class, probabilities
+
+# Check Google Drive link accessibility
+def check_drive_accessibility(file_url):
+    try:
+        response = urllib.request.urlopen(file_url)
+        return response.status == 200
+    except:
+        return False
 
 # GPT API request function (updated for all classification results)
 def get_gpt_explanation(classification_result, user_api_key=None):
@@ -170,19 +179,17 @@ def mask_evaluation(image, mask_width_ns, mask_height_mv, start_time_ns, end_tim
 # Streamlit Interface
 st.title('Eye Diagram Classifier and Evaluator v5')
 
-# Prompt user for username
-username = st.sidebar.text_input("Enter your username", value="")
+# URL to check Google Drive access
+drive_url = "https://drive.google.com/file/d/1HTvXXWXsrXceqb4w2ZDiy4B22p3rdpIj/view?usp=drive_link"
+drive_accessible = check_drive_accessibility(drive_url)
 
-# Check if user is hbpark999
-if username == "hbpark999":
+# Check if user has access to the drive link
+if drive_accessible:
     st.info("hb*** 님 API key입력을 생략합니다.")
     user_api_key = None
-elif username:
+else:
     st.info("GPT-4 API key입력이 필요합니다.")
     user_api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
-else:
-    st.warning("Please enter your username to continue.")
-    user_api_key = None
 
 # Number of classes in your model
 num_classes = 3
