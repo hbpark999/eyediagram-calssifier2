@@ -55,7 +55,7 @@ def classify_eye_diagram(image, model, classes):
 # GPT API request function (updated for all classification results)
 def get_gpt_explanation(classification_result, user_api_key=None):
     # Use the user's API key if provided, otherwise use the default from Streamlit secrets
-    if st.secrets["OPENAI_API_KEY"] and st.experimental_user.username == "hbpark999":
+    if user_api_key is None and "OPENAI_API_KEY" in st.secrets:
         api_key = st.secrets["OPENAI_API_KEY"]
     else:
         api_key = user_api_key
@@ -170,13 +170,19 @@ def mask_evaluation(image, mask_width_ns, mask_height_mv, start_time_ns, end_tim
 # Streamlit Interface
 st.title('Eye Diagram Classifier and Evaluator v5')
 
+# Prompt user for username
+username = st.sidebar.text_input("Enter your username", value="")
+
 # Check if user is hbpark999
-if st.experimental_user.username == "hbpark999":
+if username == "hbpark999":
     st.info("hb*** 님 API key입력을 생략합니다.")
     user_api_key = None
-else:
+elif username:
     st.info("GPT-4 API key입력이 필요합니다.")
     user_api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
+else:
+    st.warning("Please enter your username to continue.")
+    user_api_key = None
 
 # Number of classes in your model
 num_classes = 3
