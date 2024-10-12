@@ -1,7 +1,7 @@
-streamlit==1.32.0
-torch==2.4.1
-torchvision==0.18.0
-Pillow==10.2.0
-requests==2.31.0
-opencv-python-headless==4.8.1.78
-numpy==1.26.3
+streamlit
+torch
+torchvision
+Pillow
+requests
+opencv-python-headless
+numpy
