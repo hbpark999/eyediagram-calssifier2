@@ -8,6 +8,7 @@ import torch.nn as nn
 import cv2
 import numpy as np
 import gdown
+import os
 
 # Set the device (either GPU if available, or CPU)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -52,8 +53,16 @@ def classify_eye_diagram(image, model, classes):
         return predicted_class, probabilities
 
 # GPT API request function (updated for all classification results)
-def get_gpt_explanation(classification_result):
-    api_key = st.secrets["OPENAI_API_KEY"]
+def get_gpt_explanation(classification_result, user_api_key=None):
+    # Use the user's API key if provided, otherwise use the default from Streamlit secrets
+    if st.secrets["OPENAI_API_KEY"] and st.experimental_user.username == "hbpark999":
+        api_key = st.secrets["OPENAI_API_KEY"]
+    else:
+        api_key = user_api_key
+
+    if not api_key:
+        return "Error: No API key found. Please provide your OpenAI API key."
+    
     prompt = f"""
     In high-speed signal Eye Diagram analysis, a '{classification_result}' problem has been detected.
     Please provide the following information:
@@ -161,6 +170,14 @@ def mask_evaluation(image, mask_width_ns, mask_height_mv, start_time_ns, end_tim
 # Streamlit Interface
 st.title('Eye Diagram Classifier and Evaluator v5')
 
+# Check if user is hbpark999
+if st.experimental_user.username == "hbpark999":
+    st.info("hb*** 님 API key입력을 생략합니다.")
+    user_api_key = None
+else:
+    st.info("GPT-4 API key입력이 필요합니다.")
+    user_api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
+
 # Number of classes in your model
 num_classes = 3
 class_names = ['crosstalk', 'Loss and ISI', 'reflection']
@@ -226,7 +243,7 @@ if uploaded_image is not None:
 
         # Fetch GPT analysis
         with st.spinner('Fetching detailed analysis from GPT...'):
-            gpt_response = get_gpt_explanation(class_names[predicted_class])
+            gpt_response = get_gpt_explanation(class_names[predicted_class], user_api_key=user_api_key)
 
             # Display GPT analysis
             st.markdown("<h3>Detailed Analysis:</h3>", unsafe_allow_html=True)
