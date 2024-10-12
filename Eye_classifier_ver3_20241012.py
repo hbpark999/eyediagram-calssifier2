@@ -7,6 +7,7 @@ from torchvision import models
 import torch.nn as nn
 import cv2
 import numpy as np
+import gdown
 
 # Set the device (either GPU if available, or CPU)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -23,9 +24,18 @@ def get_model(num_classes):
     )
     return model
 
-# Load the trained model from the file
+# Load the trained model from Google Drive
 @st.cache(allow_output_mutation=True)
-def load_trained_model(model_path, num_classes):
+def load_trained_model(num_classes):
+    # Google Drive file ID
+    file_id = "12qBYyOVYjoNK1WOOyrOt2GEGDyj9yK4N"
+    url = f"https://drive.google.com/uc?id={file_id}"
+    model_path = "eye_diagram_classifier_v1.pth"
+
+    # Download the model file
+    gdown.download(url, model_path, quiet=False)
+
+    # Load the model
     model = get_model(num_classes)
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.to(device)
@@ -108,7 +118,7 @@ def preprocess_eye_diagram(image):
 # Mask evaluation function
 def mask_evaluation(image, mask_width_ns, mask_height_mv, start_time_ns, end_time_ns, voltage_range_mv):
     preprocessed_image, x, y, w, h = preprocess_eye_diagram(image)
-    
+
     image_height, image_width = preprocessed_image.shape[:2]
     total_time_ns = end_time_ns - start_time_ns
     time_per_pixel = total_time_ns / image_width
@@ -176,7 +186,7 @@ if uploaded_image is not None:
 
     # Perform mask evaluation
     image_with_mask, evaluation_result, (x, y, w, h) = mask_evaluation(image_np, mask_width_ns, mask_height_mv, start_time_ns, end_time_ns, voltage_range_mv)
-    
+
     # Display the image with mask
     st.image(image_with_mask, caption='Preprocessed Eye Diagram with Mask', use_column_width=True)
 
@@ -189,8 +199,7 @@ if uploaded_image is not None:
         st.write("The eye diagram is acceptable. No further action needed.")
     else:
         # Load the trained model
-        model_path = 'models/eye_diagram_classifier_v1.pth'
-        model = load_trained_model(model_path, num_classes)
+        model = load_trained_model(num_classes)
 
         # Prepare original image for classification
         test_transform = transforms.Compose([
@@ -218,7 +227,7 @@ if uploaded_image is not None:
         # Fetch GPT analysis
         with st.spinner('Fetching detailed analysis from GPT...'):
             gpt_response = get_gpt_explanation(class_names[predicted_class])
-        
-        # Display GPT analysis
-        st.markdown("<h3>Detailed Analysis:</h3>", unsafe_allow_html=True)
-        display_in_yellow_box(gpt_response)
+
+            # Display GPT analysis
+            st.markdown("<h3>Detailed Analysis:</h3>", unsafe_allow_html=True)
+            display_in_yellow_box(gpt_response)
