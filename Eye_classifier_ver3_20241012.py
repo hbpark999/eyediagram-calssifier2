@@ -260,4 +260,13 @@ if uploaded_image is not None:
 
             # Display GPT analysis
             st.markdown("<h3>Detailed Analysis:</h3>", unsafe_allow_html=True)
-            display_in_yellow_box(gpt_response)
+
+            # Split GPT response into paragraphs and apply formatting
+            paragraphs = gpt_response.split('
+')
+            formatted_response = ''.join([
+                f"<div style='background-color:#FFFF99;padding:10px;border-radius:5px;margin-bottom:10px;'>"
+                f"<pre style='background-color:#F0F0F0;padding:10px;border-radius:5px;'>{paragraph.strip()}</pre>"
+                f"</div>" for paragraph in paragraphs if paragraph.strip()])
+
+            st.markdown(formatted_response, unsafe_allow_html=True)
