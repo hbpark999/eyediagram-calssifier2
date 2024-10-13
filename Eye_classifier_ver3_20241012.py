@@ -179,18 +179,6 @@ def mask_evaluation(image, mask_width_ns, mask_height_mv, start_time_ns, end_tim
 # Streamlit Interface
 st.title('Eye Diagram Classifier and Evaluator v5')
 
-# URL to check Google Drive access
-drive_url = "https://drive.google.com/file/d/1HTvXXWXsrXceqb4w2ZDiy4B22p3rdpIj/view?usp=drive_link"
-drive_accessible = check_drive_accessibility(drive_url)
-
-# Check if user has access to the drive link
-if drive_accessible:
-    st.info("hb*** 님 API key입력을 생략합니다.")
-    user_api_key = None
-else:
-    st.info("GPT-4 API key입력이 필요합니다.")
-    user_api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
-
 # Number of classes in your model
 num_classes = 3
 class_names = ['crosstalk', 'Loss and ISI', 'reflection']
@@ -250,11 +238,11 @@ if uploaded_image is not None:
         for i, prob in enumerate(probabilities):
             display_in_pink_box(f"{class_names[i]}: {prob:.4f}")
 
-        # Step 3: GPT Analysis
-        if user_api_key is None and not drive_accessible:
-            st.warning("Please enter your OpenAI API key to proceed with GPT analysis.")
-            user_api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
+        # API key input after Step-2
+        st.info("GPT-4 API key입력이 필요합니다.")
+        user_api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
 
+        # Step 3: GPT Analysis
         st.markdown("<h2>Step 3. GPT Analysis:</h2>", unsafe_allow_html=True)
         st.markdown(f"[Click here for detailed GPT analysis of {class_names[predicted_class]}](https://chatgpt.com/g/g-9NESyIPPB-eye-pattern-analyzer)")
 
