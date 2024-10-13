@@ -267,7 +267,6 @@ if uploaded_image is not None:
 
         # Split GPT response into major sections and format accordingly
         sections = gpt_response.split('\n')
-
         formatted_response = ''.join([
             f"<div style='background-color:#FFFF99;padding:20px;border-radius:10px;margin-bottom:20px;'>"
             f"<h4 style='background-color:#F0F0F0;padding:10px;border-radius:5px;'>{section.strip()}</h4>"
