@@ -253,18 +253,16 @@ if uploaded_image is not None:
         st.markdown("<h3>Detailed Analysis:</h3>", unsafe_allow_html=True)
 
         # Split GPT response into major sections and format accordingly
-        sections = gpt_response.split('\n\n')
-        for section in sections:
-            st.markdown(
-                f"""
-                <div style='background-color:#FFFF99;padding:20px;border-radius:10px;margin-bottom:20px;'>
-                    <div style='background-color:#F0F0F0;padding:15px;border-radius:5px;'>
-                        {section.strip()}
-                    </div>
+        st.markdown(
+            f"""
+            <div style='background-color:#FFFF99;padding:20px;border-radius:10px;margin-bottom:20px;'>
+                <div style='background-color:#F0F0F0;padding:15px;border-radius:5px;'>
+                    {gpt_response.strip()}
                 </div>
-                """,
-                unsafe_allow_html=True
-            )
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
         # Move the GPT link to the end
         st.markdown("<h2 style='font-size:24px;'>GPTs(App) to study more</h2>", unsafe_allow_html=True)
