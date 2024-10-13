@@ -244,7 +244,6 @@ if uploaded_image is not None:
 
         # Step 3: GPT Analysis
         st.markdown("<h2>Step 3. GPT Analysis:</h2>", unsafe_allow_html=True)
-        st.markdown(f"[Click here for detailed GPT analysis of {class_names[predicted_class]}](https://chatgpt.com/g/g-9NESyIPPB-eye-pattern-analyzer)")
 
         # Fetch GPT analysis
         with st.spinner('Fetching detailed analysis from GPT...'):
@@ -266,3 +265,7 @@ if uploaded_image is not None:
                 """,
                 unsafe_allow_html=True
             )
+
+        # Move the GPT link to the end
+        st.markdown("<h2 style='font-size:24px;'>GPTs(App) to study more</h2>", unsafe_allow_html=True)
+        st.markdown(f"[Click here for detailed GPT analysis of {class_names[predicted_class]}](https://chatgpt.com/g/g-9NESyIPPB-eye-pattern-analyzer)")
