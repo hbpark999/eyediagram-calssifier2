@@ -266,9 +266,8 @@ if uploaded_image is not None:
         st.markdown("<h3>Detailed Analysis:</h3>", unsafe_allow_html=True)
 
         # Split GPT response into major sections and format accordingly
-        sections = gpt_response.split('
+        sections = gpt_response.split('\n')
 
-')
         formatted_response = ''.join([
             f"<div style='background-color:#FFFF99;padding:20px;border-radius:10px;margin-bottom:20px;'>"
             f"<h4 style='background-color:#F0F0F0;padding:10px;border-radius:5px;'>{section.strip()}</h4>"
